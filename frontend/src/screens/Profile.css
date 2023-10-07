@@ -1,0 +1,26 @@
+/* CSS for the second table */
+.second-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .second-table th,
+  .second-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .second-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .second-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .second-table tbody tr:hover {
+    background-color: #ddd;
+  }
+  

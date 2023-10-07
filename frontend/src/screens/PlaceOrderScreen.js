@@ -10,10 +10,13 @@ import { createOrder, payOrder } from '../actions/orderAction'
 import Loader from './Loader'
 import { PayPalButton } from 'react-paypal-button-v2'
 import { ToastContainer, toast } from 'react-toastify';
-
-
+import emailjs from 'emailjs-com';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 const PlaceOrderScreen = () => {
+  const [toEmail, setToEmail] = useState('');
+    const [subject, setSubject] = useState('');
+    const [message, setMessage] = useState('');
  const navigate=useNavigate()
 
  const dispatch=useDispatch()
@@ -49,9 +52,10 @@ const PlaceOrderScreen = () => {
     document.body.appendChild(script)
 }
 
+
 async function successPaymentHandler()
 { 
-    toast.success("Order Placed Successfully",{autoClose:5000})
+    toast.success("Order Placed Successfully",{autoClose:3000})
     dispatch(createOrder({
       orderItems: cart.cartItems,
       shippingAddress: cart.shippingAddr,
@@ -78,7 +82,7 @@ async function successPaymentHandler()
 
 
 
-
+ 
 
   useEffect(() => {
 
@@ -92,21 +96,67 @@ async function successPaymentHandler()
       setSdkReady(true)
       
   }
-
+  
    if (success ) {
-        // navigate(`/order/${order._id}`)
-        navigate("/")
-        dispatch({ type: ORDER_CREATE_RESET })
+    let subjectcontent=`HI ${order?.user.name.toUpperCase()} YOUR ORDER IS SUCCESSFULLY PLACED!!`
+    let messagecontent=""
+    messagecontent+="YOUR ORDER DETAILS:"+"\n"
+    const sendmessage=async ()=>{order && 
+        order.orderItems.map((i)=>{
+  
+            messagecontent=messagecontent+i.name.toString()+"\n";
+            
+            return messagecontent;}
+            )}
+            sendmessage()
+            messagecontent+="TOTAL PRICE: ₹"+order?.totalPrice+"\n";
+  
+
+            const serviceId = 'service_orjz1xl';
+  const templateId = 'template_jt13skl';
+  const userId = '8fjSPMVqybyrXa9UM';
+  const emailParams = {
+    to_email: `${order?.user.email}`,
+    subject: `${subjectcontent}`,
+    message: `${messagecontent}`,
+      to_name:`${order?.user.name}`,
+    };
+    
+            
+      emailjs.send(serviceId, templateId, emailParams, userId)
+      .then((response) => {
+        console.log('Email sent successfully:', response);
+        messagecontent="";
+        setMessage('')
+        setSubject('')
+        setToEmail('')
+      })
+      .catch((error) => {
+        console.error('Email sending failed:', error);
+      });
+
+
+
+
+    setTimeout(()=>{
+      
+      
+      navigate("/profile")
+      dispatch({ type: ORDER_CREATE_RESET })
+      
+    },3000)
+      
     }
+    
 
-
-}, [success,dispatch,sdkReady])
+}, [success,dispatch,sdkReady,order])
 
 
   return (
     <div  >
+    <ToastContainer style={{height:'10px',width:'300px'}}></ToastContainer>
   <Checkout step1 step2 step3 step4/>
-
+    
   <Row>
     <Col md={8}>
       <ListGroup variant='flush'>
@@ -153,9 +203,9 @@ async function successPaymentHandler()
 
                    
                     <Col>
-                      <Link to={`/product/${item.product}`}>
+                      
                         {item.name}
-                      </Link>
+                      
                     </Col>
                     
 
@@ -194,7 +244,7 @@ async function successPaymentHandler()
               <ListGroupItem>
                   <Row>
                     <Col>Shipping:</Col>
-                    <Col>₹{cart.shippingPrice}</Col>
+                    <Col>₹ {cart.shippingPrice}</Col>
                   </Row>
               </ListGroupItem>
 
@@ -229,6 +279,7 @@ async function successPaymentHandler()
                 <PayPalButton
                 amount={cart.totalPrice}
                 onSuccess={successPaymentHandler}
+                disabled={cart.itemsPrice===0}
                  
                 />
             )}

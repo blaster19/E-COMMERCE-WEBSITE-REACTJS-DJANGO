@@ -4,7 +4,7 @@ import { Container } from "react-bootstrap";
 import Homescreen from './screens/Homescreen'
 import Productsreen from './screens/Productscreen'
 import Cartscreen from "./screens/Cartscreen";
-import {BrowserRouter as Router,Route,Routes} from 'react-router-dom'
+import {HashRouter as Router,Route,Routes} from 'react-router-dom'
 import LoginScreen from "./screens/LoginScreen";
 import Registerscreen from "./screens/Registerscreen";
 import ShippingScreen from "./screens/ShippingScreen";

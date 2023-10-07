@@ -102,7 +102,7 @@ const Productscreen = () => {
 
                         <ListGroupItem>
                                 
-                            <Button className='btn-block align-item-center' type='button'  disabled={product.countInStock === 0} onClick={addCartHandler}>ADD TO CART </Button>
+                            {product.countInStock!==0 ? (<Button className='btn-block align-item-center' type='button'  disabled={product.countInStock === 0} onClick={addCartHandler}>ADD TO CART </Button>): (<p>Out of stock</p>)}
                         
                         </ListGroupItem>
                     </ListGroup>
